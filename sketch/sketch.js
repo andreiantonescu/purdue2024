@@ -1,4 +1,4 @@
-var context, gain, freqOne, freqTwo, button
+var context, gain, freqOne, freqTwo, button, sketchStarted = false
 
 async function setupRNBO() {
     const WAContext = window.AudioContext || window.webkitAudioContext
@@ -43,18 +43,21 @@ function draw() {
 }
 
 function startSketch() {
-    console.log('test')
+    console.log('started sketch')
     context.resume()
     button.style('display: none')
+    sketchStarted = true
 }
 
 function mouseMoved() {
-    var hue = map(mouseX, 0, innerWidth, 55, 70)
-    var brightness = map(mouseY, 0, innerHeight, 100, 50)
-
-    freqOne.value = map(mouseX, 0, innerWidth, 50, 5000)
-    freqTwo.value = map(mouseY, 0, innerHeight, 50, 5000)
-    gain.value = map(mouseY, 0, innerHeight, 0.75, 0.1)
-
-    background(hue, 85, brightness)
+    if (sketchStarted) {
+        var hue = map(mouseX, 0, innerWidth, 55, 70)
+        var brightness = map(mouseY, 0, innerHeight, 100, 50)
+    
+        freqOne.value = map(mouseX, 0, innerWidth, 50, 5000)
+        freqTwo.value = map(mouseY, 0, innerHeight, 5000, 50)
+        gain.value = map(mouseY, 0, innerHeight, 0.75, 0.1)
+    
+        background(hue, 85, brightness)
+    }
 }
