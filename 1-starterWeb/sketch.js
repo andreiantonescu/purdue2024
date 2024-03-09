@@ -8,3 +8,7 @@ function setup() {
 function draw() {
     ellipse(random(windowWidth), random(windowHeight), 50)
 }
+
+function doSomething() {
+    console.log("I was clicked")
+}
