@@ -1,4 +1,4 @@
-var context, gain, freqOne, freqTwo, button, sketchStarted = false
+var context, gain, freqOne, freqTwo, button, sketchStarted = false, filterFreq, filterRes
 
 async function setupRNBO() {
     const WAContext = window.AudioContext || window.webkitAudioContext
@@ -7,20 +7,26 @@ async function setupRNBO() {
     const outputNode = context.createGain()
     outputNode.connect(context.destination)
   
-    let response = await fetch("export/sketch.export.json");
-    const myPatcher = await response.json();
-  
-    const myDevice = await RNBO.createDevice({ context, patcher: myPatcher });
+    let responseMyPatcher = await fetch("export/sketch.export.json")
+    const myPatcher = await responseMyPatcher.json()
+    const myDevice = await RNBO.createDevice({ context, patcher: myPatcher })
+
+    let responseReverb = await fetch("export/effects/rnbo.shimmerev.json")
+    const reverbPatcher = await responseReverb.json()
+    const reverbDevice = await RNBO.createDevice({ context, patcher: reverbPatcher })
   
     // Connect the devices in series
-    myDevice.node.connect(outputNode)
+    myDevice.node.connect(reverbDevice.node)
+    reverbDevice.node.connect(outputNode)
     
     // get parameters
     gain = myDevice.parametersById.get("gain")
     freqOne = myDevice.parametersById.get("freqOne")
     freqTwo = myDevice.parametersById.get("freqTwo")
+    filterFreq = myDevice.parametersById.get("filterFreq")
+    filterRes = myDevice.parametersById.get("filterRes")
 
-    gain.value = 0.9
+    gain.value = 0
     freqOne.value = 400.0
     freqTwo.value = 400.0
     context.suspend()
@@ -35,6 +41,7 @@ function setup() {
     button.position(innerWidth/2, innerHeight/2)
     button.mousePressed(startSketch)
 
+    noStroke()
     setupRNBO()
 }
 
@@ -56,8 +63,15 @@ function mouseMoved() {
     
         freqOne.value = map(mouseX, 0, innerWidth, 50, 5000)
         freqTwo.value = map(mouseY, 0, innerHeight, 5000, 50)
-        gain.value = map(mouseY, 0, innerHeight, 0.75, 0.1)
+        gain.value = map(mouseY, 0, innerHeight, 0.5, 0.1)
+
+        filterRes.value = map(mouseY, 0, innerHeight, 0.9, 0.1)
+        filterFreq.value = map(mouseY, 0, innerHeight, 500, 2500)
     
-        background(hue, 85, brightness)
+        var colorTest = color(hue, 85, brightness)
+        colorTest.setAlpha(10)
+        background(colorTest)
+
+        ellipse(mouseX, mouseY, 35)
     }
 }
