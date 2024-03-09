@@ -63,7 +63,7 @@ function startSketch() {
     sketchStarted = true
 }
 
-function mouseMoved() {
+function theremin() {
     mouseStopped = false
     if (sketchStarted) {
         colorHue = map(mouseX, 0, innerWidth, 55, 70)
@@ -80,4 +80,12 @@ function mouseMoved() {
         pastPosX = mouseX
         pastPosY = mouseY
     }
+}
+
+function mouseMoved() {
+    theremin()
+}
+
+function mouseDragged() {
+    theremin()
 }
