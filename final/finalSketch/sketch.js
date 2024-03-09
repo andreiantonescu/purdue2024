@@ -27,7 +27,7 @@ async function setupRNBO() {
     filterFreq = myDevice.parametersById.get("filterFreq")
     filterRes = myDevice.parametersById.get("filterRes")
 
-    gain.value = 0
+    gain.value = 0.0
     freqOne.value = 400.0
     freqTwo.value = 400.0
     context.suspend()
@@ -68,10 +68,9 @@ function theremin() {
     if (sketchStarted) {
         colorHue = map(mouseX, 0, innerWidth, 55, 70)
         colorBrightness = map(mouseY, 0, innerHeight, 100, 50)
-    
+        gain.value = 0.9
         freqOne.value = map(mouseX, 0, innerWidth, 50, 5000)
         freqTwo.value = map(mouseY, 0, innerHeight, 5000, 50)
-        gain.value = map(mouseY, 0, innerHeight, 0.5, 0.1)
 
         filterRes.value = map(mouseY, 0, innerHeight, 0.9, 0.1)
         filterFreq.value = map(mouseY, 0, innerHeight, 500, 2500)
