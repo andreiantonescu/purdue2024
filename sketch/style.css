@@ -1,3 +1,27 @@
 body {
     margin: 0;
+    font-family: "Playfair", serif;
+    font-style: normal;
+}
+
+.startSketch {
+    position: absolute;
+    padding: 12px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 4px;
+    border:none;
+    font-size: large;
+    font-family: "Playfair", serif;
+}
+
+h1 {
+    position: absolute;
+    padding: 12px;
+    left: 50%;
+    bottom: 0%;
+    transform: translateX(-50%);
+    color: white;
+    font-weight: 300;
 }
