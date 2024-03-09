@@ -1,5 +1,5 @@
 var context, gain, freqOne, freqTwo, button, sketchStarted = false, filterFreq, filterRes
-var pastPosX, pastPosY, mouseStopped = true, hue, brightness
+var pastPosX, pastPosY, mouseStopped = true, hue, brightness = 0
 
 async function setupRNBO() {
     const WAContext = window.AudioContext || window.webkitAudioContext
