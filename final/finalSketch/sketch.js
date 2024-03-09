@@ -1,5 +1,5 @@
 var context, gain, freqOne, freqTwo, button, sketchStarted = false, filterFreq, filterRes
-var pastPosX, pastPosY, mouseStopped = true
+var pastPosX, pastPosY, mouseStopped = true, hue, brightness
 
 async function setupRNBO() {
     const WAContext = window.AudioContext || window.webkitAudioContext
@@ -50,6 +50,10 @@ function draw() {
     if(mouseStopped && gain != undefined) {
         gain.value = 0
     }
+
+    var colorTest = color(hue, 85, brightness)
+    colorTest.setAlpha(10)
+    background(colorTest)
 }
 
 function startSketch() {
@@ -62,8 +66,8 @@ function startSketch() {
 function mouseMoved() {
     mouseStopped = false
     if (sketchStarted) {
-        var hue = map(mouseX, 0, innerWidth, 55, 70)
-        var brightness = map(mouseY, 0, innerHeight, 100, 50)
+        hue = map(mouseX, 0, innerWidth, 55, 70)
+        brightness = map(mouseY, 0, innerHeight, 100, 50)
     
         freqOne.value = map(mouseX, 0, innerWidth, 50, 5000)
         freqTwo.value = map(mouseY, 0, innerHeight, 5000, 50)
@@ -71,10 +75,6 @@ function mouseMoved() {
 
         filterRes.value = map(mouseY, 0, innerHeight, 0.9, 0.1)
         filterFreq.value = map(mouseY, 0, innerHeight, 500, 2500)
-    
-        var colorTest = color(hue, 85, brightness)
-        colorTest.setAlpha(10)
-        background(colorTest)
 
         ellipse(mouseX, mouseY, 35)
         pastPosX = mouseX
