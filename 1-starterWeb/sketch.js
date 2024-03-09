@@ -9,6 +9,10 @@ function draw() {
     ellipse(random(windowWidth), random(windowHeight), 50)
 }
 
+function mouseMoved() {
+    console.log(mouseX, mouseY)
+}
+
 function doSomething() {
     console.log("I was clicked")
 }
