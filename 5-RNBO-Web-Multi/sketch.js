@@ -10,9 +10,14 @@ async function setupRNBO() {
     let response = await fetch("export/Example.export.json")
     const myPatcher = await response.json()
     const myDevice = await RNBO.createDevice({ context, patcher: myPatcher })
+
+    let responseTwo = await fetch("export/Reverb/rnbo.shimmerev.json")
+    const myPatcherTwo = await responseTwo.json()
+    const myDeviceTwo = await RNBO.createDevice({ context, patcher: myPatcherTwo })
   
     // Connect the devices in series
-    myDevice.node.connect(outputNode)
+    myDevice.node.connect(myDeviceTwo.node)
+    myDeviceTwo.node.connect(outputNode)
     
     // get parameters
     freqOne = myDevice.parametersById.get("freqOne")
