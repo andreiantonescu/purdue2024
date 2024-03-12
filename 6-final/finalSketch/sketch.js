@@ -43,6 +43,7 @@ function setup() {
 }
 
 function draw() {
+    console.log(mouseStopped)
     if(mouseX == pastPosX  && mouseY == pastPosY) {
         mouseStopped = true
     }
@@ -54,6 +55,9 @@ function draw() {
     var newBackgroundColor = color(colorHue, 85, colorBrightness)
     newBackgroundColor.setAlpha(10)
     background(newBackgroundColor)
+
+    pastPosX = mouseX
+    pastPosY = mouseY
 }
 
 function startSketch() {
@@ -76,8 +80,6 @@ function theremin() {
         filterFreq.value = map(mouseY, 0, innerHeight, 500, 2500)
 
         ellipse(mouseX, mouseY, 35)
-        pastPosX = mouseX
-        pastPosY = mouseY
     }
 }
 
