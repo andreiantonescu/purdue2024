@@ -1,6 +1,6 @@
 var context, gain, freqOne, freqTwo, button, sketchStarted = false, filterFreq, filterRes
 var colorHue = 0, colorBrightness = 0, myDevice
-var warp_FS, drawLayer, warpLayer
+var warp_FS, drawLayer, warpLayer, intensity = 1
 
 async function setupRNBO() {
     const WAContext = window.AudioContext || window.webkitAudioContext
@@ -28,13 +28,18 @@ async function setupRNBO() {
         }
     });
 
-    let responseReverb = await fetch("export/effects/rnbo.platereverb.json")
+    let responseReverb = await fetch("export/effects-1/rnbo.platereverb.json")
     const reverbPatcher = await responseReverb.json()
     const reverbDevice = await RNBO.createDevice({ context, patcher: reverbPatcher })
+
+    let finalReverb = await fetch("export/effects-2/rnbo.shimmerev.json")
+    const finalReverbPatcher = await finalReverb.json()
+    const finalReverbDevice = await RNBO.createDevice({ context, patcher: finalReverbPatcher })
   
     // Connect the devices in series
     myDevice.node.connect(reverbDevice.node)
-    reverbDevice.node.connect(outputNode)
+    reverbDevice.node.connect(finalReverbDevice.node)
+    finalReverbDevice.node.connect(outputNode)
     
     // get parameters
     gain = myDevice.parametersById.get("gain")
@@ -48,9 +53,9 @@ function setup() {
 
     var glslFunctions =  
     `
-    vec2 sineWave(vec2 p, float disp, float time) {
-        float x = sin(disp * p.x + time);
-        float y = sin(disp * p.y + time);
+    vec2 sineWave(vec2 p, float disp, float time, float intensity) {
+        float x = sin(disp * p.x + time) * intensity;
+        float y = sin(disp * p.y + time) * intensity;
         return vec2(p.x + x, p.y + y);
     }
     `
@@ -68,13 +73,13 @@ function setup() {
     `
     uniform vec2 r;
     uniform sampler2D img;
-    uniform float pr, disp, time;
+    uniform float pr, disp, time, intensity;
   
     void main() {
         vec2 uv = (gl_FragCoord.xy/r.xy)/pr;
         uv.y = 1.0 - uv.y;
   
-        gl_FragColor = texture2D(img, sineWave(uv, disp, time));
+        gl_FragColor = texture2D(img, sineWave(uv, disp, time, intensity));
       // gl_FragColor = texture2D(img, uv);
     }
     `
@@ -91,21 +96,22 @@ function setup() {
 }
 
 function draw() {
-    var newBackgroundColor = color(colorHue, 85, colorBrightness)
-    newBackgroundColor.setAlpha(1)
-
     warpLayer.shader(warp)
     warp.setUniform("r", [innerWidth, innerHeight])
-    warp.setUniform("pr", 1)
+    warp.setUniform("pr", pixelDensity())
     warp.setUniform("iResolution", [innerWidth, innerHeight])
     warp.setUniform("img", drawLayer)
-    warp.setUniform("time", frameCount/10)
+    warp.setUniform("time", frameCount/25)
     warp.setUniform("disp", keyCode)
+    warp.setUniform("intensity", intensity/100)
   
     warpLayer.quad(-1, -1, 1, -1, 1, 1, -1, 1)
 
     image(warpLayer, -innerWidth/2, -innerHeight/2)
-    drawLayer.background(newBackgroundColor)
+
+    if(intensity > 1) {
+        intensity--
+    }
 }
 
 function startSketch() {
@@ -128,8 +134,8 @@ function keyPressed() {
         // midi port 0
         let noteOnEvent = new RNBO.MIDIEvent(context.currentTime * 1000, 0, noteOnMessage)
         myDevice.scheduleEvent(noteOnEvent)
-        drawLayer.fill('redx')
         drawLayer.ellipse(random(innerWidth) - innerWidth/2, random(innerHeight) - innerHeight/2, random(200))
+        intensity += 10
     }
 }
 
