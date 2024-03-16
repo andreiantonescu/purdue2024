@@ -1,0 +1,22 @@
+[
+  {
+    "id": "piano",
+    "file": "max/382499__lomographicmusic__piano-35-c5.wav"
+  },
+  {
+    "id": "kick",
+    "file": "max/kick.wav"
+  },
+  {
+    "id": "cowbell",
+    "file": "max/cowbell.wav"
+  },
+  {
+    "id": "clap",
+    "file": "max/clap.wav"
+  },
+  {
+    "id": "tom",
+    "file": "max/tom.wav"
+  }
+]
